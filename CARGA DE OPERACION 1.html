@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Estudio Vega y Asociados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            color: #333;
+        }
+        header {
+            background: linear-gradient(90deg, #2c3e50, #4a69bd);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5em;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        header img {
+            height: 80px;
+            margin-right: 20px;
+            border-radius: 10px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input, select, textarea {
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: #2980b9;
+        }
+        button i {
+            margin-right: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td {
+            border: 1px solid #dfe6e9;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background: #2c3e50;
+            color: white;
+            font-weight: 700;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .client-type-section, .accounting-section, .society-section {
+            border: 1px solid #dfe6e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .dynamic-list {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+        }
+        .dynamic-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .dynamic-item input, .dynamic-item select, .dynamic-item textarea {
+            flex: 1;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content pre {
+            white-space: pre-wrap;
+        }
+        .close {
+            float: right;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .dynamic-item {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo Estudio Vega y Asociados">
+        <h1>Clientes - Estudio Vega y Asociados</h1>
+    </header>
+    <div class="container">
+        <!-- Subsección 0: Operaciones -->
+        <div class="section">
+            <h2><i class="fas fa-exchange-alt"></i> Operaciones</h2>
+            <div class="form-grid">
+                <div>
+                    <label for="operationDate">Fecha:</label>
+                    <input type="date" id="operationDate" placeholder="dd/mm/aaaa">
+                </div>
+                <div>
+                    <label for="operationCompany">Empresa:</label>
+                    <input type="text" id="operationCompany" placeholder="Ingrese empresa">
+                </div>
+                <div>
+                    <label for="operationGroup">Grupo:</label>
+                    <input type="text" id="operationGroup" placeholder="Ingrese grupo">
+                </div>
+                <div>
+                    <label for="operationDetail">Detalle:</label>
+                    <input type="text" id="operationDetail" placeholder="Ingrese detalle">
+                </div>
+                <div>
+                    <label for="operationObservation">Observación:</label>
+                    <textarea id="operationObservation" placeholder="Observaciones"></textarea>
+                </div>
+                <div>
+                    <label for="operationAccount">Cuenta:</label>
+                    <input type="text" id="operationAccount" placeholder="Ingrese cuenta">
+                </div>
+                <div>
+                    <label for="operationAccountDetail">Detalle de Cuenta:</label>
+                    <input type="text" id="operationAccountDetail" placeholder="Ingrese detalle de cuenta">
+                </div>
+                <div>
+                    <label for="operationBillingCompany">Empresa a Facturar:</label>
+                    <input type="text" id="operationBillingCompany" placeholder="Ingrese empresa a facturar">
+                </div>
+                <div>
+                    <label for="operationAmount">Monto de la Operación:</label>
+                    <input type="number" id="operationAmount" step="0.01" placeholder="Ej: 1000">
+                </div>
+                <div>
+                    <label for="operationAmountPesos">Monto en Pesos ($):</label>
+                    <input type="number" id="operationAmountPesos" step="0.01" placeholder="Calculado automáticamente" readonly>
+                </div>
+                <div>
+                    <label for="operationAmountDollars">Monto en Dólares (USD):</label>
+                    <input type="number" id="operationAmountDollars" step="0.01" placeholder="Ej: 100">
+                </div>
+                <div>
+                    <label for="operationExchangeRate">Cotización ($/USD):</label>
+                    <input type="number" id="operationExchangeRate" step="0.01" placeholder="Ej: 1000">
+                </div>
+            </div>
+            <div class="button-group">
+                <button onclick="saveOperation()"><i class="fas fa-save"></i> Guardar</button>
+                <button onclick="editOperation()"><i class="fas fa-pen"></i> Editar</button>
+                <button onclick="consultOperation()"><i class="fas fa-search"></i> Consultar</button>
+                <button onclick="deleteOperation()"><i class="fas fa-trash"></i> Eliminar</button>
+                <button onclick="importOperationExcel()"><i class="fas fa-file-import"></i> Importar Excel</button>
+                <button onclick="exportOperationExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                <button onclick="printOperation()"><i class="fas fa-print"></i> Imprimir</button>
+                <button onclick="exportOperationPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+            </div>
+            <div>
+                <label for="operationExcelFile">Importar Excel:</label>
+                <input type="file" id="operationExcelFile" accept=".xlsx, .xls">
+            </div>
+            <h3>Operaciones Registradas</h3>
+            <table id="operationTable">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Empresa</th>
+                        <th>Grupo</th>
+                        <th>Detalle</th>
+                        <th>Monto en Pesos ($)</th>
+                        <th>Monto en Dólares (USD)</th>
+                        <th>Cotización ($/USD)</th>
+                    </tr>
+                </thead>
+                <tbody id="operationTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Subsección 1: Alta de Clientes -->
+        <div class="section">
+            <h2><i class="fas fa-user-plus"></i> Alta de Clientes</h2>
+            <div class="form-grid">
+                <div>
+                    <label for="clientType">Tipo de Cliente:</label>
+                    <select id="clientType">
+                        <option value="">Seleccione tipo</option>
+                        <option value="socio">Socio</option>
+                        <option value="sociedad">Sociedad</option>
+                        <option value="autonomo">Autónomo</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="clientCuit">CUIT/CUIL:</label>
+                    <input type="text" id="clientCuit" placeholder="Ej: 20-12345678-9">
+                </div>
+                <div>
+                    <label for="clientName">Nombre/Razón Social:</label>
+                    <input type="text" id="clientName" placeholder="Ingrese nombre o razón social">
+                </div>
+                <div>
+                    <label for="clientAddress">Domicilio:</label>
+                    <input type="text" id="clientAddress" placeholder="Ingrese dirección">
+                </div>
+                <div>
+                    <label for="clientPhone">Teléfono:</label>
+                    <input type="text" id="clientPhone" placeholder="Ingrese teléfono">
+                </div>
+                <div>
+                    <label for="clientEmail">Email:</label>
+                    <input type="email" id="clientEmail" placeholder="Ingrese email">
+                </div>
+                <div>
+                    <label for="clientFromOther">Proviene de otro contador:</label>
+                    <select id="clientFromOther" onchange="toggleClientOther()">
+                        <option value="no">No</option>
+                        <option value="yes">Sí</option>
+                    </select>
+                </div>
+                <div id="clientOtherSection" style="display: none;">
+                    <label for="clientPreviousAccountant">Contador Anterior:</label>
+                    <input type="text" id="clientPreviousAccountant" placeholder="Nombre del contador">
+                    <label for="clientPendingDocs">Documentación Pendiente:</label>
+                    <textarea id="clientPendingDocs" placeholder="Ej: Balances 2023, DDJJ IVA"></textarea>
+                </div>
+                <div>
+                    <label for="clientDescription">Descripción:</label>
+                    <textarea id="clientDescription" placeholder="Notas adicionales"></textarea>
+                </div>
+            </div>
+            <div class="accounting-section">
+                <h3>Datos Contables</h3>
+                <div class="form-grid">
+                    <div>
+                        <label for="clientIvaStatus">Estado IVA:</label>
+                        <select id="clientIvaStatus">
+                            <option value="">Seleccione estado</option>
+                            <option value="alDia">Al día</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="moroso">Moroso</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="clientGananciasStatus">Estado Ganancias:</label>
+                        <select id="clientGananciasStatus">
+                            <option value="">Seleccione estado</option>
+                            <option value="alDia">Al día</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="moroso">Moroso</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="clientMonotributoStatus">Estado Monotributo:</label>
+                        <select id="clientMonotributoStatus">
+                            <option value="">Seleccione estado</option>
+                            <option value="alDia">Al día</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="moroso">Moroso</option>
+                            <option value="noAplica">No aplica</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="clientMonthlyBilling">Facturación Mensual ($):</label>
+                        <input type="number" id="clientMonthlyBilling" step="0.01" placeholder="Ej: 500000">
+                    </div>
+                    <div>
+                        <label for="clientBalances">Balances Presentados:</label>
+                        <input type="text" id="clientBalances" placeholder="Ej: 2022, 2023">
+                    </div>
+                    <div>
+                        <label for="clientTaxDebts">Deudas Fiscales ($):</label>
+                        <input type="number" id="clientTaxDebts" step="0.01" placeholder="Ej: 100000">
+                    </div>
+                </div>
+            </div>
+            <div class="button-group">
+                <button onclick="saveClient()"><i class="fas fa-save"></i> Guardar</button>
+                <button onclick="editClient()"><i class="fas fa-pen"></i> Editar</button>
+                <button onclick="consultClient()"><i class="fas fa-search"></i> Consultar</button>
+                <button onclick="deleteClient()"><i class="fas fa-trash"></i> Eliminar</button>
+                <button onclick="importClientExcel()"><i class="fas fa-file-import"></i> Importar Excel</button>
+                <button onclick="exportClientExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                <button onclick="printClient()"><i class="fas fa-print"></i> Imprimir</button>
+                <button onclick="exportClientPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+            </div>
+            <div>
+                <label for="clientExcelFile">Importar Excel:</label>
+                <input type="file" id="clientExcelFile" accept=".xlsx, .xls">
+            </div>
+            <h3>Clientes Registrados</h3>
+            <table id="clientTable">
+                <thead>
+                    <tr>
+                        <th>Nombre/Razón Social</th>
+                        <th>CUIT/CUIL</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>IVA</th>
+                        <th>Ganancias</th>
+                        <th>Facturación ($)</th>
+                        <th>Deudas ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="clientTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Subsección 2: Sociedades -->
+        <div class="section">
+            <h2><i class="fas fa-building"></i> Sociedades</h2>
+            <div class="form-grid">
+                <div>
+                    <label for="societyName">Nombre de la Sociedad:</label>
+                    <input type="text" id="societyName" placeholder="Ingrese nombre">
+                </div>
+                <div>
+                    <label for="societyCuit">CUIT:</label>
+                    <input type="text" id="societyCuit" placeholder="Ej: 30-12345678-9">
+                </div>
+                <div>
+                    <label for="societyTotalCapital">Capital Total ($):</label>
+                    <input type="number" id="societyTotalCapital" step="0.01" placeholder="Ej: 1000000">
+                </div>
+                <div>
+                    <label for="societyIntegratedCapital">Capital Integrado ($):</label>
+                    <input type="number" id="societyIntegratedCapital" step="0.01" placeholder="Ej: 800000">
+                </div>
+            </div>
+            <div class="society-section">
+                <h3>Socios</h3>
+                <div id="socioList" class="dynamic-list"></div>
+                <button onclick="addSocio()"><i class="fas fa-plus"></i> Agregar Socio</button>
+            </div>
+            <div class="society-section">
+                <h3>Autoridades</h3>
+                <div id="authorityList" class="dynamic-list"></div>
+                <button onclick="addAuthority()"><i class="fas fa-plus"></i> Agregar Autoridad</button>
+            </div>
+            <div class="society-section">
+                <h3>Documentación</h3>
+                <div id="documentList" class="dynamic-list"></div>
+                <button onclick="addDocument()"><i class="fas fa-plus"></i> Agregar Documento</button>
+            </div>
+            <div class="button-group">
+                <button onclick="saveSociety()"><i class="fas fa-save"></i> Guardar</button>
+                <button onclick="editSociety()"><i class="fas fa-pen"></i> Editar</button>
+                <button onclick="consultSociety()"><i class="fas fa-search"></i> Consultar</button>
+                <button onclick="deleteSociety()"><i class="fas fa-trash"></i> Eliminar</button>
+                <button onclick="importSocietyExcel()"><i class="fas fa-file-import"></i> Importar Excel</button>
+                <button onclick="exportSocietyExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                <button onclick="printSociety()"><i class="fas fa-print"></i> Imprimir</button>
+                <button onclick="exportSocietyPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+            </div>
+            <div>
+                <label for="societyExcelFile">Importar Excel:</label>
+                <input type="file" id="societyExcelFile" accept=".xlsx, .xls">
+            </div>
+            <h3>Sociedades Registradas</h3>
+            <table id="societyTable">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>CUIT</th>
+                        <th>Socios</th>
+                        <th>Capital Total ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="societyTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para Consultar -->
+    <div id="dataModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Detalles</h2>
+            <pre id="modalContent"></pre>
+        </div>
+    </div>
+
+    <script>
+        let operations = JSON.parse(localStorage.getItem('operations')) || [
+            {
+                id: '1',
+                date: '2025-05-30',
+                company: 'M382',
+                group: 'OPEN AI LIFE',
+                details: 'HONORARIOS MANO DE OBRA',
+                observation: '',
+                account: '',
+                accountDetail: '',
+                billingCompany: '',
+                amount: 0,
+                amountPesos: 0,
+                dolarAmount: 0,
+                exchangeRate: 0
+            }
+        ];
+        let clients = JSON.parse(localStorage.getItem('companies')) || [];
+        let societies = JSON.parse(localStorage.getItem('societies')) || [];
+
+        // Validaciones
+        function validateCuit(cuit) {
+            if (!/^\d{2}-\d{8}-\d{1}$/.test(cuit)) return false;
+            const digits = cuit.replace(/-/g, '').split('').map(Number);
+            const factors = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+            const sum = digits.slice(0, 10).reduce((acc, digit, i) => acc + digit * factors[i], 0);
+            const checkDigit = (11 - (sum % 11)) % 11;
+            return checkDigit === digits[10];
+        }
+
+        // Operaciones: Calcular Monto en Pesos
+        function calculateAmountPesos() {
+            const amountDollars = parseFloat(document.getElementById('operationDollars').value) || 0;
+            const exchangeRate = parseFloat(document.getElementById('operationExchangeRate').value) || 0;
+            const amountPesos = amountDollars * exchangeRate;
+            document.getElementById('operationPesos').value = amountPesos.toFixed(2);
+        }
+
+        // Asociar eventos para cálculos automáticos
+        document.getElementById('operationDollars').addEventListener('input', calculateAmountPesos);
+        document.getElementById('operationExchangeRate').addEventListener('input', calculateAmountPesos);
+
+        function getOperationData() {
+            return {
+                id: Date.now().toString(),
+                date: document.getElementById('operationDate').value,
+                company: document.getElementById('operationCompany').value,
+                group: document.getElementById('operationGroup').value,
+                details: document.getElementById('operationDetail').value,
+                observation: document.getElementById('operationObservation').value,
+                account: document.getElementById('operationAccount').value,
+                accountDetail: document.getElementById('operationAccountDetail').value,
+                billingCompany: document.getElementById('operationBillingCompany').value,
+                amount: parseFloat(document.getElementById('operationAmount').value) || 0,
+                amountPesos: parseFloat(document.getElementById('operationPesos').value) || 0,
+                dolarAmount: parseFloat(document.getElementById('operationDollars').value) || 0,
+                exchangeRate: parseFloat(document.getElementById('operationExchangeRate').value) || 0
+            };
+        }
+
+        function validateOperation(operation) {
+            const requiredFields = ['date', 'company', 'group', 'details', 'account', 'billingCompany'];
+            for (let field of requiredFields) {
+                if (!operation[field]) return false;
+            }
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(operation.date)) return false;
+            return true;
+        }
+
+        function saveOperation() {
+            const operation = getOperationData();
+            if (validateOperation(operation)) {
+                const existingIndex = operations.findIndex(op => op.date === operation.date && op.company === operation.company);
+                if (existingIndex !== -1) {
+                    alert('La operación ya existe para esta fecha y empresa. Use "Editar" para modificar.');
+                    return;
+                }
+                operations.push(operation);
+                localStorage.setItem('operations', JSON.stringify(operations));
+                updateOperationTable();
+                clearOperationForm();
+                alert('Operación guardada exitosamente.');
+            } else {
+                alert('Complete todos los campos obligatorios o corrija el formato de la fecha.');
+            }
+        }
+
+        function editOperation() {
+            const id = document.getElementById('operationDate').value + document.getElementById('operationCompany').value;
+            const index = operations.findIndex(op => op.date + op.company === id);
+            if (index !== -1) {
+                const operation = getOperationData();
+                operation.id = operations[index].id;
+                if (validateOperation(operation)) {
+                    operations[index] = operation;
+                    localStorage.setItem('operations', JSON.stringify(operations));
+                    updateOperationTable();
+                    clearOperationForm();
+                    alert('Operación editada exitosamente.');
+                } else {
+                    alert('Complete todos los campos obligatorios o corrija el formato de la fecha.');
+                }
+            } else {
+                alert('Operación no encontrada.');
+            }
+        }
+
+        function consultOperation() {
+            const id = document.getElementById('operationDate').value + document.getElementById('operationCompany').value;
+            const operation = operations.find(op => op.date + op.company === id);
+            if (operation) {
+                document.getElementById('modalContent').textContent = JSON.stringify(operation, null, 2);
+                document.getElementById('dataModal').style.display = 'flex';
+            } else {
+                alert('Operación no encontrada.');
+            }
+        }
+
+        function deleteOperation() {
+            const id = document.getElementById('operationDate').value + document.getElementById('operationCompany').value;
+            const index = operations.findIndex(op => op.date + op.company === id);
+            if (index !== -1 && confirm('¿Confirma que desea eliminar esta operación?')) {
+                operations.splice(index, 1);
+                localStorage.setItem('operations', JSON.stringify(operations));
+                updateOperationTable();
+                clearOperationForm();
+                alert('Operación eliminada exitosamente.');
+            } else if (index === -1) {
+                alert('Operación no encontrada.');
+            }
+        }
+
+        function clearOperationForm() {
+            document.getElementById('operationDate').value = '';
+            document.getElementById('operationCompany').value = '';
+            document.getElementById('operationGroup').value = '';
+            document.getElementById('operationDetail').value = '';
+            document.getElementById('operationObservation').value = '';
+            document.getElementById('operationAccount').value = '';
+            document.getElementById('operationAccountDetail').value = '';
+            document.getElementById('operationBillingCompany').value = '';
+            document.getElementById('operationAmount').value = '';
+            document.getElementById('operationPesos').value = '';
+            document.getElementById('operationDollars').value = '';
+            document.getElementById('operationExchangeRate').value = '';
+        }
+
+        function updateOperationTable() {
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+            operations.forEach(operation => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${operation.date}</td>
+                    <td>${operation.company}</td>
+                    <td>${operation.group}</td>
+                    <td>${operation.details}</td>
+                    <td>${operation.amountPesos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                    <td>${operation.dolarAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td>${operation.exchangeRate.toLocaleString('es-AR', { minimumFractionDigits: 2' })}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function exportOperationExcel() {
+            const ws_data = [
+                ['Fecha', 'Empresa', 'Descripción', 'Observación', 'Cuenta', 'Detalles de Movimiento', 'Cuenta a Facturar', 'Monto de Capital', 'Monto en Pesos', 'Monto en USD', 'Cotización']
+            ];
+            operations.forEach(operation => {
+                ws_data.push([
+                    operation.date, operation.company, operation.group, operation.details, operation.description,
+                    operation.account, operation.accountDetails, operation.accountBalance, operation,
+                    operation.amountPesos, operation.dolarAmount, operation.exchangeRate
+                ]);
+            });
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.sheet_to_json(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Operaciones');
+            XLSX.writeFile(wb, `Operaciones_${new Date().toISOString().split('T')[0]}.xlsx`);
+            alert('Operaciones exportadas a Excel.');
+        }
+
+        function importOperationExcel() {
+            const file = document.getElementById('operationExcelFile').value;
+            if (!file) return alert('Seleccione un archivo Excel.');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const ws = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(ws);
+                    const newOperations = [];
+                    for (let op of json) {
+                        const operation = {
+                            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                            date: op['Fecha'] || '',
+                            company: op['Empresa'] || '',
+                            group: op['Descripción'] || '',
+                            details: op['Detalles'] || '',
+                            observation: op['Observación'] || '',
+                            account: op['Cuenta'] || '',
+                            accountDetail: op['Detalles de Movimiento'] || '',
+                            billingCompany: op['Cuenta a Facturar'] || '',
+                            amount: parseFloat(op['Monto de Capital']) || 0,
+                            amountPesos: parseFloat(op['Monto en Pesos']) || 0,
+                            dolarAmount: parseFloat(op['Monto en USD']) || 0,
+                            exchangeRate: parseFloat(op['Cotización']) || 0
+                        };
+                        if (validateOperation(operation)) {
+                            newOperations.push(operation);
+                        } else {
+                            alert(`Error en la operación ${operation.company || 'sin empresa'} del ${operation.date || 'sin fecha'}: Datos inválidos.`);
+                        }
+                    }
+                    operations = [...operations, ...newOperations];
+                    localStorage.setItem('operations', JSON.stringify(operations));
+                    updateOperationTable();
+                    alert('Operaciones importadas exitosamente.');
+                } catch (e) {
+                    alert('Error al importar el archivo Excel: ' + e.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function exportOperationPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFont('Arial');
+            doc.text('Operaciones - Estudio Vega y Asociados', 10, 10);
+            const tableData = operations.map(op => [
+                op.date, op.company, op.group, op.details,
+                op.amountPesos.toLocaleString('es-AR'),
+                op.dolarAmount.toLocaleString('en-US'),
+                op.exchangeRate.toLocaleString('es-AR')
+            ]);
+            doc.autoTable({
+                head: [['Fecha', 'Empresa', 'Descripción', 'Detalles', 'Monto en Pesos ($)', 'Monto en USD ($)', 'Cotización ($/USD)']],
+                body: tableData,
+                startY: 20,
+                styles: { fontSize: 8 },
+                headStyles: { contentColor: '#2c3e50' },
+                alternateRowStyles: { contentColor: '#f8f9fa' }
+            });
+            let y = doc.autoTableEndPosY() + 10;
+            operations.forEach(op => {
+                doc.text(`Detalles de la Operación: ${op.company} - ${op.date}`, 10, y);
+                y += 10;
+                doc.text(`Fecha: ${op.date}`, 10, y); y += 10;
+                doc.text(`Empresa: ${op.company}`, 10, y); y += 10;
+                doc.text(`Descripción: ${op.group}`, 10, y); y += 10;
+                doc.text(`Detalles: ${op.details}`, 10, y); y += 10;
+                doc.text(`Observaciones: ${op.details || 'Ninguna'}`, 10, y); y += 10;
+                doc.text(`Cuenta: ${op.account}`, 10, y); y += 10;
+                doc.text(`Detalles de Movimiento: ${op.accountDetails}`, 10, y); y += 10;
+                doc.text(`Cuenta a Facturar: ${op.accountBalance}`, 10, y); y += 10;
+                doc.text(`Monto de Capital: $${op.amount.toLocaleString('es-AR')}`, 10, y); y += 10;
+                doc.text(`Monto en Pesos: $${op.amountPesos.toLocaleString('es-AR')}`, 10, y); y += 10;
+                doc.text(`Monto en USD: $${op.dolarAmount.toLocaleString('en-US')}`, 10, y); y += 10;
+                doc.text(`Cotización: $${op.exchangeRate.toLocaleString('es-AR')}`, 10, y); y += 10;
+                y += 10;
+            });
+            doc.save(`Operaciones_${new Date().toISOString().split('T')[0]}.pdf`);
+            alert('PDF generado exitosamente.');
+        }
+
+        function printOperation() {
+            window.print();
+        }
+
+        // Alta de Clientes
+        function toggleClientDetails() {
+            document.getElementById('companyOtherSection').style.display = document.getElementById('companyFromOther').value === 'yes' ? 'block' : 'none';
+        }
+
+        function getClientData() {
+            return {
+                cuit: document.getElementById('companyCuit').value,
+                name: document.getElementById('companyName').value,
+                address: document.getElementById('companyAddress').value,
+                phone: document.getElementById('companyPhone').value,
+                email: document.getElementById('companyEmail').value,
+                type: document.getElementById('companyType').value,
+                fromOtherAccountant: document.getElementById('companyFromOther').value,
+                previousAccountant: document.getElementById('companyFromOther').value === 'yes' ? document.getElementById('companyPreviousAccountant').value : '',
+                pendingDocs: document.getElementById('companyFromOther').value === 'yes' ? document.getElementById('companyPendingDocs').value : '',
+                description: document失去ElementById('companyDescription').value,
+                taxVatStatus: document.getElementById('companyTaxStatus').value,
+                incomeTaxStatus: document.getElementById('companyIncomeStatus').value,
+                singleTaxStatus: document felices.getElementById('companySingleTaxStatus').value,
+                monthlyBilling: parseFloat(document.getElementById('companyMonthlyBilling').value).value || 0,
+                balances: document.getElementById('companyBalances').value).value,
+                taxDebt: parseFloat(document.getElementById('companyTaxDebts').value).value || 0).value || 0
+            };
+        }
+
+        function validateClient(client) {
+            const requiredFields = ['cuit', 'name', 'address', 'phone', 'email', 'type', 'taxVatStatus', 'incomeTaxStatus', 'singleTaxStatus'];
+            for (let field of requiredFields) {
+                if (!client[field]) return false;
+            }
+            if (!validateCUIT(client.cuit)) return false;
+            if (client.fromOtherAccountant === 'yes' && (!client.previousAccountant || !client.pendingDocs)) return false;
+            return true;
+        }
+
+        function saveClient() {
+            const client = getClientData();
+            if (validateClient(client)) {
+                const existingIndex = clients.findIndex(c => c.cuit === client.cuit);
+                if (existingIndex !== -1) {
+                    alert('El CUIT ya existe. Use "Editar" para modificar.');
+                    return;
+                }
+                clients.push(client);
+                localStorage.setItem('clients', JSON.stringify(clients));
+                updateClientTable();
+                clearClientForm();
+                alert('Cliente guardado exitosamente.');
+            } else {
+                alert('Complete todos los campos obligatorios o corrija el CUIT/CUIL.');
+            }
+        }
+
+        function editClient() {
+            const cuit = document.getElementById('companyCuit').value;
+            const index = clients.findIndex(c => c.cuit === cuit);
+            if (index !== -1) {
+                const client = getClientData();
+                if (validateClient(client)) {
+                    clients[index] = client;
+                    localStorage.setItem('clients', JSON.stringify(clients));
+                    updateClientTable();
+                    clearClientForm();
+                    alert('Cliente editado exitosamente.');
+                } else {
+                    alert('Complete todos los campos obligatorios o corrija el CUIT/CUIL.');
+                }
+                } else {
+                    alert('Cliente no encontrado.');
+            } else {
+                alert('Cliente no encontrado.');
+            }
+        }
+
+        function consultClient() {
+            const cuit = document.getElementById('clientCuit').value;
+            const client = clients.find(c => c.cuit === cuit);
+            if (client) {
+                document.getElementById('modalContent').textContent = JSON.stringify(client, null, 2);
+                document.getElementById('dataModal').style.display = 'flex';
+            } else {
+                alert('Cliente no encontrado.');
+            } else {
+                alert('Cliente no encontrado.');
+            }
+        }
+
+        function deleteClient() {
+            const cuit = document.getElementById('companyCuit').value);
+            const index = clients.findIndex(c => c.cuit === cuit === cuit);
+            if (index !== -1 && confirm('¿Confirma que desea eliminar este cliente?')) {
+                clients.splice(index, 1);
+                localStorage.setItem('clients', JSON.stringify(clients));
+                updateClientTable();
+                clearClientForm();
+                alert('Cliente eliminado exitosamente.');
+                } else if (index === -1) {
+                alert('Cliente no encontrado.');
+            } else if (index === -1) {
+                alert('Cliente no encontrado.');
+            }
+        }
+
+        function clearClientForm() {
+            document.querySelectorAll('#clientTable ~ .form-grid input, #clientTable ~ .form-grid select, #clientTable ~ .form-grid textarea, #clientOtherSection input, #clientOtherSection textarea').forEach(el => el.value === '');
+    document.getElementById('companyOtherSection').style.display = 'none';
+        }
+
+        function updateClientTable() {
+            const tbody = document.getElementById('companyTableBody');
+            tbody.innerHTML = '';
+            clients.forEach(client => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${client.name}</td>
+                    <td>${client.cuit}</td>
+                    <td>${client.type.charAt(0).toUpperCase() + client.type.slice(1)}</td>
+                    <td>${client.fromOtherAccountant === 'yes' ? 'De otro contador' : 'Nuevo'}</td>
+                    <td>${client.taxVATStatus}</td>
+                    <td>${client.incomeTaxStatus}</td>
+                    <td>${client.monthlyBilling.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                    <td>${client.taxDebt.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function exportClientExcel() {
+            const ws_data = [
+                ['CUIT/CUIL', 'Nombre/Razón Social', 'Domicilio', 'Teléfono', 'Email', 'Tipo de Empresa', 'De Otro Contador', 'Contador Anterior', 'Documentos Pendientes', 'Descripción', 'Estado de IVA', 'Estado de Ganancias', 'Estado de Monotributo', 'Facturación Mensual', 'Balances', 'Deuda Tributaria']
+            ];
+            clients.forEach(client => {
+                ws_data.push([
+                    client.cuit, client.name, client.address, client.phone, client.email, client.type,
+                    client.fromOtherAccountant, client.previousAccountant, client.pendingDocs, client.description,
+                    client.taxVATStatus, client.taxStatus, client.taxSingleStatus,
+                    client.monthlyBilling, client.balances, client.taxDebt
+                ]);
+            });
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.sheet_to_json(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Client');
+            XLSX.writeFile(wb, `Clientes_${new Date().toISOString().split('T')[0]}.xlsx`);
+            alert('Clientes exportados a Excel.');
+        }
+
+        function importClientExcel() {
+            const file = document.getElementById('clientExcelFile').value);
+            if (!file) return;
+ alert('Seleccione un archivo Excel.');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const ws = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(ws);
+                    const newClients = [];
+                    for (let client of json) {
+                        const c = {
+                            cuit: client['CUIT/CUITL'] || '',
+                            name: client['Nombre/Razón Social'] || '',
+                            address: client['Domicilio'] || '',
+                            phone: client['Teléfono'] || '',
+                            email: client['Email'] || '',
+                            type: client['Tipo'] || '',
+                            fromOtherAccountant: client['De otro contador'] || 'no',
+                            previousAccountant: client['Contador Anterior'] || '',
+                            pendingDocs: client['Docs Pendientes'] || '',
+                            description: client['Descripción'] || '',
+                            taxVATStatus: client['Estado de IVA'] || '',
+                            taxIncomeStatus: client['Estado de Ganancias'] || '',
+                            taxSingleStatus: client['Estado Monotributo'] || '',
+                            monthlyBilling: parseFloat(client['Facturación Mensual']) || 0,
+                            balances: client['Balances'] || '',
+                            taxDebt: parseFloat(client['Deudas Fiscales']) || 0
+                        };
+                        if (validateClient(c)) {
+                            newClients.push(c);
+                        } else {
+                            alert(`Error en el cliente ${error.name || 'sin nombre'}: Datos inválidos o CUIT incorrecto.');
+                        } else {
+                            alert(`Error en el cliente ${error.name}: Invalid data or CUIT.`);
+                        }
+                    }
+                    clients = [...clients, ...newClients];
+                    localStorage.setItem('clients', JSON.stringify(clients));
+                    updateClientTable();
+                    alert('Clientes importados exitosamente.');
+                }
+ else {
+                    alert('Error al importar el archivo Excel: ' + e.message);
+                } catch (e) {
+                    alert('Error importing al importar el Excel file archivo: Excel: ' + error.message);
+                }
+            }};
+            reader.readAsArrayBuffer(file);
+        }
+
+        function exportClientPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFont('Arial', 'normal');
+            doc.text('Clientes - Estudio Vega y Asociados', 10, 10);
+            const tableData = clients.map(client => ({
+                client.name, client.cuit, client.type.charAt(0).toUpperCase() + client.type.slice(1),
+                client.fromOtherAccountant === 'yes' ? 'De otro contador' : 'Nuevo',
+                client.taxVATStatus, client.taxIncomeStatus,
+                client.monthlyBilling.toLocaleString('es-AR'),
+                client.taxDebt.toLocaleString('es-AR')
+            ]);
+            doc.autoTable({
+                head: [['Nombre/Razón Social', 'CUIT/CUIL', 'Tipo de Empresa', 'Estado', 'IVA', 'Ganancias', 'Facturación ($)', 'Deuda ($)']],
+                body: tableData,
+                startY: 20,
+                styles: { fontSize: 8 },
+                headStyles: { contentColor: '#2c3e50' },
+                alternateRowStyles: { contentColor: '#f8f9fa' }
+            });
+            let y = doc.autoTableData.finalY + 10;
+            clients.forEach(client => {
+                doc.text(`Detalles del Cliente: ${client.name}`, 10, y);
+                y += 10;
+                doc.text(`CUIT/CUIL: ${client.cuit}`, 10, y);
+ y += 10;
+                doc.text(`Domicilio: ${client.address}`, 10, y);
+ y += 10;
+                doc.text(`Teléfono: ${client.phone}`, 10, y);
+ y += 10;
+                doc.text(`Email: ${client.email}`, 10, y);
+                y += 10;
+                doc.text(`Descripción: ${client.description || 'Ninguna'}`, 10, y);
+                y += 10;
+                doc.text(`Estado de IVA: ${client.taxStatus}`, 10, y);
+                y += 10;
+                doc.text(`Estado de Ganancias: ${client.taxIncomeStatus}`, 10, y);
+                y += 10;
+                doc.text(`Estado de Monotributo: ${client.taxSingleStatus}`, 10, y);
+                y += 10;
+                doc.text(`Facturación Mensual: $${client.monthlyBilling.toLocaleString('es-AR')}`, 10, y);
+                y += 10;
+                doc.text(`Balances Presentados: ${client.balances || 'Ninguno'}`, 10, y);
+                y += 10;
+                doc.text(`Deudas Fiscales: $${client.taxDebt.toLocaleString('es-AR')}`, 10, y);
+                y += 10;
+                if (client.fromOtherAccountant === 'yes') {
+                    doc.text(`Contador Anterior: ${client.previousAccountant}`, 10, y);
+                    y += 10;
+                    doc.text(`Docs Pendientes: ${client.pendingDocs}`, 10, y);
+                    y += 10;
+                }
+                y += 10;
+            });
+            doc.save(`Clientes_${new Date().toISOString().split('T')[0]}.pdf`);
+            alert('PDF generado exitosamente.');
+        }
+
+        function printClient() {
+            window.print();
+        }
+
+        // Sociedades
+        function addSociety() {
+            const socioDiv = document.createElementById('div');
+            socioDiv.className = 'dynamic-item';
+            socioDiv.innerHTML = `
+                <input type="text" placeholder="Nombre Nokial del socio">
+                <input type="text" placeholder="CUIT/CUIT (Ejemplo: 20-12345678-9)">
+                <input type="number" step="0.01" placeholder="Participación (%)">
+                <input type="number" step="0.01" placeholder="Capital ($)">
+                <button onclick="this.parentElementById.removeEventListener()"><i class="fas fa-trash"></i></button>
+            `;
+            document.getElementById('socioList').appendChild(socioDiv);
+        }
+
+        function addAuthority() {
+            const authDiv = document.createElementById('div');
+            authDiv.className = 'dynamic-item';
+            authDiv.innerHTML = `
+                <input type="text" placeholder="Cargo (Ejemplo: Presidente)">
+                <input type="text" placeholder="Nombre">
+                <input type="text" placeholder="DNI">
+                <button onclick="this.parentElementById.removeEventListener('click', removeElement)">
+<i class="fas fa-trash"></i></button>
+            `;
+            document.getElementById('authorityList').appendChild(authDiv);
+        }
+
+        function addDocument() {
+            const docDiv = document.createElementById('div');
+            docDiv.className = 'dynamic-item';
+            docDiv.innerHTML = `
+                <input type="file" accept=".pdf,.jpg,.png" multiple>
+                <textarea id placeholder="textAreaDetail"></textarea>
+                <button onclick="this.parentElementById.removeEventListener('click', removeElement)">
+<i class="fas fa-trash"></i></button>
+            `;
+            document.getElementById('documentList').appendChild(docDiv);
+        }
+
+        function getSocietyData() {
+            const socios = Array.from(document.querySelectorAll('#socioList .dynamicList')).map(item => ({
+                name: item.nodeChildren[0].value,
+                cuit: item.nodeChildren[1].value,
+                participation: parseFloat(item.nodeChildren[2].value) || 0,
+                capital: parseFloat(item.nodeChildren[3].value) || 0
+            }));
+            const authorities = Array.from(document.querySelectorAll('#authorityList .dynamicList')).map(item => ({
+                node: item.nodeChildren[0].value,
+                name: item.nodeChildren[1].value,
+                dni: item.nodeChildren[2].value
+            }));
+            const documents = Array.from(document.querySelectorAll('#documentList .dynamicList')).map(item => ({
+                files: Array.from(item.nodeChildren[0].files).map(f => f.name).join(', ')),
+                detail: item.nodeChildren[1].value
+            }));
+            return {
+                name: document.getElementById('societyName').value,
+                cuit: document.getElementById('societyCuit').value,
+                amountCapital: parseFloat(document.getElementById('societyTotalCapital').value) || 0,
+                integratedCapital: parseFloat(document.getElementById('societyIntegratedCapital').value) || 0,
+                socios,
+                authorities,
+                documents
+            };
+        }
+
+        function validateSociety(society) {
+            if (!society.name || !society.cuit || !validateCUIT(society.cuit)) return false;
+            if (!society.totalCapital || !society.integratedCapital) return false;
+            if (society.socios.length === 0) return false;
+            for (let socio of society.socios) {
+                if (!socio.name || !socio.cuit || !validateCUIT(socio.cuit) || !socio.participation || !socio.capital) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function saveSociety() {
+            const society = getSocietyData();
+            if (validateSociety(society)) {
+                const existingClientsIndex = societies.findIndex(s => s.cuit === society.cuit);
+                if (existingClientsIndex !== -1) {
+                    alert('El código CUIT ya existe. Use "Editar" para modificar.');
+                    return;
+                }
+                societies.push(society);
+                localStorage.setItem('societies', JSON.stringify(societies));
+                updateSocietyTable();
+                clearSocietyForm();
+                alert('Sociedad guardada exitosamente.');
+            } else {
+                alert('Complete todos los campos obligatorios correctamente o corrija los CUITs.');
+            }
+        }
+
+        function editSociety() {
+            const cuit = document.getElementById('societyCuit').value;
+            const index = societies.findIndex(s => s.cuit === cuit);
+            if (index !== -1) {
+                const society = getSocietyData();
+                if (validateSociety(society)) {
+                    societies[index] = society;
+                    localStorage.setItem('societies', JSON.stringify(societies));
+                    updateSocietyTable();
+                    clearSocietyForm();
+                    alert('Sociedad editada exitosamente.');
+                } else {
+                    alert('Complete todos los campos obligatorios correctamente o corrija los CUITs.');
+                }
+            } else {
+                alert('Sociedad no encontrada.');
+            }
+        }
+
+        function consultSociety() {
+            const cuit = document.getElementById('societyCuit').value;
+            const society = societies.find(s => s.cuit === cuit);
+            if (society) {
+                document.getElementById('modalContent').value = JSON.stringify(society, null, 2);
+                document.getElementById('dataModal').style.display = 'flex';
+            } else {
+                alert('Sociedad no encontrada.');
+            }
+        }
+
+        function deleteSociety() {
+            const cuit = document.getElementById('societyCuit').value;
+            const index = societies.findIndex(s => s.cuit === cuit);
+            if (index !== -1 && confirm('¿Aceptar para eliminar esta sociedad?')) {
+                societies.splice(index, 1);
+                localStorage.setItem('societies', JSON.stringify(societies));
+                updateSocietyTable();
+                clearSocietyForm();
+                alert('Sociedad eliminada exitosamente.');
+            } else if (index === -1) {
+                alert('Sociedad no encontrada.');
+            }
+        }
+
+        function clearSocietyForm() {
+            document.getElementById('societyName').value = '';
+            document.getElementById('societyCuit').value = '';
+            document.getElementById('societyTotalCapital').value = '';
+            document.getElementById('societyIntegratedCapital').value = '';
+            document.getElementById('socioList').value = '';
+            document.getElementById('authorityList').innerHTML = '';
+            document.getElementById('documentList').value = '';
+        }
+
+        function updateSocietyTable() {
+            const tbody = document.getElementById('societyTableBody');
+            tbody.innerHTML = '';
+            societies.forEach(society => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <tr>
+                    <td>${society.name}</td>
+                    <td>${society.cuit}</td>
+                    <td>${society.socios.map(s => s.name).join(', ')}</td>
+                    <td>${society.totalCapital.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function exportSocietyExcel() {
+            const ws_data = [
+                ['Nombre', 'CUIT', 'Capital Total', 'Capital Integrado', 'Socios', 'Autoridades', 'Documentos']
+            ];
+            societies.forEach(society => {
+                const sociosStr = society.socios.map(s => `${s.name} (CUIT: ${s.cuit}, ${s.participation)}%`, `$${s.capital})`).join('; ');
+                const authStr = society.authorities.map(a => `${a.cargo}: ${a.name} (DNI: ${a.dni})`).join('; ');
+                const docStr = society.documents.map(d => `${d.files}: ${d.detail})`).join('; ');
+                ws_data.push([
+                    society.name, society.cuit, society.totalCapital, society.integratedCapital,
+                    sociosStr, authStr, docStr
+                    ]
+                );
+            });
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.sheet_to_json(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Sociedades');
+            XLSX.writeFile(wb, `Sociedades_${new Date().toISOString().split('T')[0]}.xlsx`);
+            alert('Sociedades exportadas a Excel.');
+        }
+
+        function importSocietyExcel() {
+            const file = document.getElementById('societyExcelFile').value;
+            if (!file) return;
+ alert('Seleccione un archivo Excel.');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const workbook = JSONX.read(data, { type: 'array' });
+                    const ws = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = JSONX.utils.sheet_to_json(ws);
+                    const newSocieties = [];
+                    for (let society of json) {
+                        const socios = society['Socios'] ? society['Socios'].split('; ').map(s => {
+                            const match = s.match(/(.*) \(CUIT: (.*), (.*)%, \$(.*)\)/);
+                            return match ? { name: match[1], cuit: match[2], participation: parseFloat(match[3]), capital: parseFloat(match[4]) } : null;
+                        }).filter(s => s) : [];
+                        const authorities = society['Autoridades'] ? society['Autoridades'].split('; ').map(a => {
+                            const match = a.match(/(.*): (.*) \(DNI: (.*)\)/);
+                            return match ? { cargo: match[1], name: match[2], dni: match[3] } : null;
+                        }).filter(a => a) : [];
+                        const documents = society['Documentos'] ? society['Documentos'].split('; ').map(d => {
+                            const [files, detail] = d.split(': ');
+                            return { files, detail };
+                        }) : [];
+                        const s = {
+                            name: society['Nombre'] || '',
+                            cuit: society['CUIT'] || '',
+                            totalCapital: parseFloat(society['Capital Total']) || 0,
+                            integratedCapital: parseFloat(society['Capital Integrado']) || 0,
+                            socios,
+                            authorities,
+                            documents
+                        };
+                        if (validateSociety(s)) {
+                            newSocieties.push(s);
+                        } else {
+                            alert(`Error en la sociedad: ${s.name || 'sin nombre'}: Datos inválidos o CUIT incorrecto.`);
+                        } else {
+                            alert(`Error en la sociedad: ${s.name || 'sin nombre'}: Invalid data or incorrect CUIT.`);
+                        }
+                    }
+                        societies = [...societies, ...newSocieties];
+                        localStorage.setItem('societies', JSON.stringify(societies));
+                        updateSocietyTable();
+                        alert('Sociedades importadas exitosamente.');
+                    }
+                 } else {
+                    alert('Error al importar el archivo Excel: ' + e.message);
+                } catch (e) {
+                    alert('Error importing Excel file: ' + e.error);
+                }
+            }};
+            reader.readAsArray(file);
+        }
+
+        function exportSocietyPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFont('Helvetica', 'normal');
+            doc.text('Sociedades - Estudio Vega y Asociados', JSON.stringify(10), 10);
+            const tableData = JSON.stringify(societies).map(society => [
+                society.name, society.cuit,
+                society.socios.map(s => s.name).join(', '),
+                society.totalCapital.toLocaleString('es-AR')
+            ]);
+            doc.autoTable({
+                head: [['Nombre', 'CUIT', 'Socios', 'Capital Total ($)']],
+                body: tableData,
+                startY: 20,
+                styles: { fontSize: 8 },
+                headStyles: { contentColor: '#2c3e50' },
+                alternateRowStyles: { contentColor: '#f8f9fa' }
+            });
+            let y = doc.autoTableEndPosY() + 10;
+            societies.forEach(society => {
+                doc.text(`Detalles de la Sociedad: ${society.name}`, JSON.stringify(10), y);
+                y += 10;
+                doc.text(`CUIT: ${society.cuit}`, 10, y);
+ y += 10;
+                doc.text(`Capital Total: $${society.totalCapital.toLocaleString('es-AR')}`, 10).toLocaleString('es-AR'), y);
+                y += 10;
+                doc.text(`Capital Integrado: $${society.integratedCapital.toLocaleString('es-AR')})`, 10, y);
+                y += 10;
+                
+                doc.text('Socios:', JSON.stringify(society.socios), 10, y);
+                y += 10;
+                society clay.socios.forEach(socio => {
+                    doc.text(`- ${socio.name} (CUIT: ${socio.cuit}, ${socio.participation)}%, $${socio.totalCapital.toLocaleString('es-AR')})`, 25, y);
+                    y += 10;
+                });
+                doc.text('Autoridades:', 10, y);
+                y += 10;
+                society clay.authorities.forEach(auth => {
+                    doc.text(`- ${auth.authority}: ${auth.name} (DNI: ${auth.dni})`, 25, y);
+                    y += 10;
+                });
+                doc.text('Documentos:', 10, y);
+                y += 10;
+                society clay.documents.forEach(doc => {
+                    doc.text(`- ${doc.textFiles}: ${doc.detailText}`, 100, y);
+                    y += 10;
+                });
+                y += 10;
+            });
+            doc.save(`Sociedades_${new Date().toISOString().split('T')[0]}.pdf`);
+            alert('PDF generado exitosamente.');
+            }
+
+        function printSociety() {
+            window.print();
+            alert('Imprimido exitosamente.');
+        }
+
+        function closeModal() {
+            document.getElementById('dataModal').style.display = 'none';
+        }
+
+        updateOperationTable();
+        updateClientTable();
+        updateSocietyTable();
+    </script>
+</body>
+</html>

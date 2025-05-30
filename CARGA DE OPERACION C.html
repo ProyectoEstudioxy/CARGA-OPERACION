@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Operaciones</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 30px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+        .btn-custom {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        .form-control, .form-select {
+            border-radius: 5px;
+        }
+        h1, h3, h4 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sub-section {
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+        .totals {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario de Operaciones</h1>
+        <form id="operationForm">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="fecha" class="form-label">Fecha (dd/mm/aaaa)</label>
+                    <input type="date" class="form-control" id="fecha" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="empresa" class="form-label">Empresa</label>
+                    <input type="text" class="form-control" id="empresa" placeholder="Ingrese empresa" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="grupo" class="form-label">Grupo</label>
+                    <input type="text" class="form-control" id="grupo" placeholder="Ingrese grupo">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="detalle" class="form-label">Detalle</label>
+                    <input type="text" class="form-control" id="detalle" placeholder="Ingrese detalle">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="observacion" class="form-label">Observación</label>
+                <textarea class="form-control" id="observacion" rows="3" placeholder="Observaciones"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="cuenta" class="form-label">Cuenta</label>
+                    <input type="text" class="form-control" id="cuenta" placeholder="Ingrese cuenta">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="detalleCuenta" class="form-label">Detalle de Cuenta</label>
+                    <input type="text" class="form-control" id="detalleCuenta" placeholder="Ingrese detalle de cuenta">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="empresaFacturar" class="form-label">Empresa a Facturar</label>
+                <input type="text" class="form-control" id="empresaFacturar" placeholder="Ingrese empresa a facturar">
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="moneda" class="form-label">Moneda</label>
+                    <select class="form-select" id="moneda" required>
+                        <option value="USD">USD</option>
+                        <option value="ARS">Pesos (ARS)</option>
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="Other">Otra</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="montoOperacion" class="form-label">Monto de la Operación</label>
+                    <input type="number" class="form-control" id="montoOperacion" placeholder="Ej: 100" step="0.01" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="cotizacion" class="form-label">Cotización ($/Moneda)</label>
+                    <input type="number" class="form-control" id="cotizacion" placeholder="Ej: 1000" step="0.01">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="montoPesos" class="form-label">Monto en Pesos ($)</label>
+                    <input type="text" class="form-control" id="montoPesos" readonly>
+                </div>
+            </div>
+            <div class="sub-section">
+                <h4>Pago</h4>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
+                        <input type="date" class="form-control" id="fechaVencimiento">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="anticipo" class="form-label">Anticipo ($)</label>
+                        <input type="number" class="form-control" id="anticipo" placeholder="Ej: 5000" step="0.01">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="montoCuota" class="form-label">Monto de la Cuota ($)</label>
+                        <input type="number" class="form-control" id="montoCuota" placeholder="Ej: 1000" step="0.01">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="cantidadCuotas" class="form-label">Cantidad de Cuotas</label>
+                        <input type="number" class="form-control" id="cantidadCuotas" placeholder="Ej: 5" step="1">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="montoTotalCuotas" class="form-label">Monto Total de Cuotas ($)</label>
+                        <input type="text" class="form-control" id="montoTotalCuotas" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="totalAnticipoCuotas" class="form-label">Total Anticipo + Cuotas ($)</label>
+                        <input type="text" class="form-control" id="totalAnticipoCuotas" readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="diferencia" class="form-label">Diferencia a Pagar ($)</label>
+                        <input type="text" class="form-control" id="diferencia" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap">
+                <button type="submit" class="btn btn-primary btn-custom">Guardar</button>
+                <button type="button" class="btn btn-warning btn-custom" id="editBtn" disabled>Editar</button>
+                <button type="button" class="btn btn-info btn-custom" id="consultBtn">Consultar</button>
+                <button type="button" class="btn btn-danger btn-custom" id="deleteBtn" disabled>Eliminar</button>
+                <input type="file" class="form-control btn-custom" id="importExcel" accept=".xlsx, .xls">
+                <button type="button" class="btn btn-success btn-custom" id="exportExcel">Exportar Excel</button>
+                <button type="button" class="btn btn-secondary btn-custom" id="printBtn">Imprimir</button>
+                <button type="button" class="btn btn-dark btn-custom" id="exportPdf">Exportar PDF</button>
+            </div>
+        </form>
+
+        <div class="table-container">
+            <h3>Operaciones Registradas</h3>
+            <table class="table table-striped table-bordered" id="operationsTable">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Empresa</th>
+                        <th>Grupo</th>
+                        <th>Detalle</th>
+                        <th>Observación</th>
+                        <th>Cuenta</th>
+                        <th>Detalle Cuenta</th>
+                        <th>Empresa a Facturar</th>
+                        <th>Moneda</th>
+                        <th>Monto</th>
+                        <th>Cotización</th>
+                        <th>Monto ($)</th>
+                        <th>Fecha Venc.</th>
+                        <th>Anticipo ($)</th>
+                        <th>Monto Cuota ($)</th>
+                        <th>Cant. Cuotas</th>
+                        <th>Total Cuotas ($)</th>
+                        <th>Total Pagado ($)</th>
+                        <th>Diferencia ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <div class="totals">
+                <p>Total USD: <span id="totalUSD">0.00</span></p>
+                <p>Total ARS: <span id="totalARS">0.00</span></p>
+                <p>Total General (ARS): <span id="totalGeneral">0.00</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SheetJS for Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- jsPDF for PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let operations = [];
+        let selectedIndex = null;
+
+        // Format date for display (dd/mm/yyyy)
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        // Calculate Monto en Pesos, Total Cuotas, Total Pagado, and Diferencia
+        function calculateValues() {
+            const moneda = document.getElementById('moneda').value;
+            const montoOperacion = parseFloat(document.getElementById('montoOperacion').value) || 0;
+            const cotizacion = parseFloat(document.getElementById('cotizacion').value) || 1;
+            const anticipo = parseFloat(document.getElementById('anticipo').value) || 0;
+            const montoCuota = parseFloat(document.getElementById('montoCuota').value) || 0;
+            const cantidadCuotas = parseInt(document.getElementById('cantidadCuotas').value) || 0;
+
+            // Calculate Monto en Pesos
+            let montoPesos = moneda === 'ARS' ? montoOperacion : montoOperacion * cotizacion;
+            document.getElementById('montoPesos').value = montoPesos.toFixed(2);
+
+            // Calculate Total Cuotas
+            const montoTotalCuotas = montoCuota * cantidadCuotas;
+            document.getElementById('montoTotalCuotas').value = montoTotalCuotas.toFixed(2);
+
+            // Calculate Total Anticipo + Cuotas
+            const totalAnticipoCuotas = anticipo + montoTotalCuotas;
+            document.getElementById('totalAnticipoCuotas').value = totalAnticipoCuotas.toFixed(2);
+
+            // Calculate Diferencia
+            const diferencia = montoPesos - totalAnticipoCuotas;
+            document.getElementById('diferencia').value = diferencia.toFixed(2);
+        }
+
+        // Add event listeners for real-time calculations
+        ['moneda', 'montoOperacion', 'cotizacion', 'anticipo', 'montoCuota', 'cantidadCuotas'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateValues);
+        });
+
+        // Save operation
+        document.getElementById('operationForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const operation = {
+                fecha: document.getElementById('fecha').value,
+                empresa: document.getElementById('empresa').value,
+                grupo: document.getElementById('grupo').value,
+                detalle: document.getElementById('detalle').value,
+                observacion: document.getElementById('observacion').value,
+                cuenta: document.getElementById('cuenta').value,
+                detalleCuenta: document.getElementById('detalleCuenta').value,
+                empresaFacturar: document.getElementById('empresaFacturar').value,
+                moneda: document.getElementById('moneda').value,
+                montoOperacion: parseFloat(document.getElementById('montoOperacion').value) || 0,
+                cotizacion: parseFloat(document.getElementById('cotizacion').value) || 1,
+                montoPesos: parseFloat(document.getElementById('montoPesos').value) || 0,
+                fechaVencimiento: document.getElementById('fechaVencimiento').value,
+                anticipo: parseFloat(document.getElementById('anticipo').value) || 0,
+                montoCuota: parseFloat(document.getElementById('montoCuota').value) || 0,
+                cantidadCuotas: parseInt(document.getElementById('cantidadCuotas').value) || 0,
+                montoTotalCuotas: parseFloat(document.getElementById('montoTotalCuotas').value) || 0,
+                totalAnticipoCuotas: parseFloat(document.getElementById('totalAnticipoCuotas').value) || 0,
+                diferencia: parseFloat(document.getElementById('diferencia').value) || 0
+            };
+
+            if (selectedIndex !== null) {
+                operations[selectedIndex] = operation;
+                selectedIndex = null;
+                document.getElementById('editBtn').disabled = true;
+                document.getElementById('deleteBtn').disabled = true;
+            } else {
+                operations.push(operation);
+            }
+
+            updateTable();
+            document.getElementById('operationForm').reset();
+            document.getElementById('montoPesos').value = '';
+            document.getElementById('montoTotalCuotas').value = '';
+            document.getElementById('totalAnticipoCuotas').value = '';
+            document.getElementById('diferencia').value = '';
+        });
+
+        // Update table and totals
+        function updateTable() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            let totalUSD = 0;
+            let totalARS = 0;
+
+            operations.forEach((op, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(op.fecha)}</td>
+                    <td>${op.empresa}</td>
+                    <td>${op.grupo}</td>
+                    <td>${op.detalle}</td>
+                    <td>${op.observacion}</td>
+                    <td>${op.cuenta}</td>
+                    <td>${op.detalleCuenta}</td>
+                    <td>${op.empresaFacturar}</td>
+                    <td>${op.moneda}</td>
+                    <td>${op.montoOperacion.toFixed(2)}</td>
+                    <td>${op.cotizacion.toFixed(2)}</td>
+                    <td>${op.montoPesos.toFixed(2)}</td>
+                    <td>${formatDate(op.fechaVencimiento)}</td>
+                    <td>${op.anticipo.toFixed(2)}</td>
+                    <td>${op.montoCuota.toFixed(2)}</td>
+                    <td>${op.cantidadCuotas}</td>
+                    <td>${op.montoTotalCuotas.toFixed(2)}</td>
+                    <td>${op.totalAnticipoCuotas.toFixed(2)}</td>
+                    <td>${op.diferencia.toFixed(2)}</td>
+                `;
+                row.addEventListener('click', () => selectRow(index));
+                tableBody.appendChild(row);
+
+                // Update totals
+                if (op.moneda === 'USD') totalUSD += op.montoOperacion;
+                totalARS += op.montoPesos;
+            });
+
+            // Update totals display
+            document.getElementById('totalUSD').textContent = totalUSD.toFixed(2);
+            document.getElementById('totalARS').textContent = totalARS.toFixed(2);
+            document.getElementById('totalGeneral').textContent = totalARS.toFixed(2); // Assuming total general in ARS
+        }
+
+        // Select row for editing/deleting
+        function selectRow(index) {
+            selectedIndex = index;
+            const op = operations[index];
+            document.getElementById('fecha').value = op.fecha;
+            document.getElementById('empresa').value = op.empresa;
+            document.getElementById('grupo').value = op.grupo;
+            document.getElementById('detalle').value = op.detalle;
+            document.getElementById('observacion').value = op.observacion;
+            document.getElementById('cuenta').value = op.cuenta;
+            document.getElementById('detalleCuenta').value = op.detalleCuenta;
+            document.getElementById('empresaFacturar').value = op.empresaFacturar;
+            document.getElementById('moneda').value = op.moneda;
+            document.getElementById('montoOperacion').value = op.montoOperacion;
+            document.getElementById('cotizacion').value = op.cotizacion;
+            document.getElementById('montoPesos').value = op.montoPesos.toFixed(2);
+            document.getElementById('fechaVencimiento').value = op.fechaVencimiento;
+            document.getElementById('anticipo').value = op.anticipo;
+            document.getElementById('montoCuota').value = op.montoCuota;
+            document.getElementById('cantidadCuotas').value = op.cantidadCuotas;
+            document.getElementById('montoTotalCuotas').value = op.montoTotalCuotas.toFixed(2);
+            document.getElementById('totalAnticipoCuotas').value = op.totalAnticipoCuotas.toFixed(2);
+            document.getElementById('diferencia').value = op.diferencia.toFixed(2);
+            document.getElementById('editBtn').disabled = false;
+            document.getElementById('deleteBtn').disabled = false;
+        }
+
+        // Consult (filter table - basic example)
+        document.getElementById('consultBtn').addEventListener('click', () => {
+            const empresa = prompt('Ingrese empresa para filtrar:');
+            if (empresa) {
+                const filtered = operations.filter(op => op.empresa.toLowerCase().includes(empresa.toLowerCase()));
+                const tableBody = document.getElementById('tableBody');
+                tableBody.innerHTML = '';
+                filtered.forEach((op, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${formatDate(op.fecha)}</td>
+                        <td>${op.empresa}</td>
+                        <td>${op.grupo}</td>
+                        <td>${op.detalle}</td>
+                        <td>${op.observacion}</td>
+                        <td>${op.cuenta}</td>
+                        <td>${op.detalleCuenta}</td>
+                        <td>${op.empresaFacturar}</td>
+                        <td>${op.moneda}</td>
+                        <td>${op.montoOperacion.toFixed(2)}</td>
+                        <td>${op.cotizacion.toFixed(2)}</td>
+                        <td>${op.montoPesos.toFixed(2)}</td>
+                        <td>${formatDate(op.fechaVencimiento)}</td>
+                        <td>${op.anticipo.toFixed(2)}</td>
+                        <td>${op.montoCuota.toFixed(2)}</td>
+                        <td>${op.cantidadCuotas}</td>
+                        <td>${op.montoTotalCuotas.toFixed(2)}</td>
+                        <td>${op.totalAnticipoCuotas.toFixed(2)}</td>
+                        <td>${op.diferencia.toFixed(2)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        });
+
+        // Delete operation
+        document.getElementById('deleteBtn').addEventListener('click', () => {
+            if (selectedIndex !== null) {
+                operations.splice(selectedIndex, 1);
+                selectedIndex = null;
+                updateTable();
+                document.getElementById('operationForm').reset();
+                document.getElementById('montoPesos').value = '';
+                document.getElementById('montoTotalCuotas').value = '';
+                document.getElementById('totalAnticipoCuotas').value = '';
+                document.getElementById('diferencia').value = '';
+                document.getElementById('editBtn').disabled = true;
+                document.getElementById('deleteBtn').disabled = true;
+            }
+        });
+
+        // Import Excel
+        document.getElementById('importExcel').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+                operations = json.map(row => ({
+                    fecha: row['Fecha'] || '',
+                    empresa: row['Empresa'] || '',
+                    grupo: row['Grupo'] || '',
+                    detalle: row['Detalle'] || '',
+                    observacion: row['Observación'] || '',
+                    cuenta: row['Cuenta'] || '',
+                    detalleCuenta: row['Detalle de Cuenta'] || '',
+                    empresaFacturar: row['Empresa a Facturar'] || '',
+                    moneda: row['Moneda'] || 'USD',
+                    montoOperacion: parseFloat(row['Monto de la Operación']) || 0,
+                    cotizacion: parseFloat(row['Cotización ($/Moneda)']) || 1,
+                    montoPesos: parseFloat(row['Monto en Pesos ($)']) || 0,
+                    fechaVencimiento: row['Fecha de Vencimiento'] || '',
+                    anticipo: parseFloat(row['Anticipo ($)']) || 0,
+                    montoCuota: parseFloat(row['Monto de la Cuota ($)']) || 0,
+                    cantidadCuotas: parseInt(row['Cantidad de Cuotas']) || 0,
+                    montoTotalCuotas: parseFloat(row['Monto Total de Cuotas ($)']) || 0,
+                    totalAnticipoCuotas: parseFloat(row['Total Anticipo + Cuotas ($)']) || 0,
+                    diferencia: parseFloat(row['Diferencia a Pagar ($)']) || 0
+                }));
+                updateTable();
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Export Excel
+        document.getElementById('exportExcel').addEventListener('click', () => {
+            const worksheet = XLSX.utils.json_to_sheet(operations);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Operaciones');
+            XLSX.writeFile(workbook, 'operaciones.xlsx');
+        });
+
+        // Print
+        document.getElementById('printBtn').addEventListener('click', () => {
+            window.print();
+        });
+
+        // Export PDF
+        document.getElementById('exportPdf').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text('Operaciones Registradas', 10, 10);
+            let y = 20;
+            operations.forEach(op => {
+                doc.text(`Fecha: ${formatDate(op.fecha)}`, 10, y);
+                doc.text(`Empresa: ${op.empresa}`, 10, y + 10);
+                doc.text(`Moneda: ${op.moneda}`, 10, y + 20);
+                doc.text(`Monto: ${op.montoOperacion.toFixed(2)}`, 10, y + 30);
+                doc.text(`Monto (ARS): ${op.montoPesos.toFixed(2)}`, 10, y + 40);
+                doc.text(`Diferencia: ${op.diferencia.toFixed(2)}`, 10, y + 50);
+                y += 60;
+            });
+            doc.save('operaciones.pdf');
+        });
+    </script>
+</body>
+</html>
